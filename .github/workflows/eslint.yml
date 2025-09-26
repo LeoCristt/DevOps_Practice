@@ -2,54 +2,44 @@ name: ESLint
 
 on:
   push:
-    branches: [ "dev" ]
+    branches:
+      - main
+      - '**/feature/**'
+      - dev
   pull_request:
-    branches: [ "dev" ]
-    types: [opened, reopened, synchronize]
+    branches:
+      - dev
+    paths:
+      - 'frontend/**'
 
 jobs:
-  eslint:
-    name: Run eslint scanning
+  lint:
+    name: Run ESLint and generate SARIF
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
-      actions: read
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '18' # Совместимая версия Node.js
+          node-version: 20
 
-      - name: Install ESLint and plugins
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run ESLint and generate SARIF
+        working-directory: frontend
         run: |
-          npm install eslint@8.57.0
-          npm install @microsoft/eslint-formatter-sarif@3.1.0
-          npm install @eslint/js@8.57.0
-          npm install typescript-eslint@8.8.0
-          npm install eslint-plugin-prettier@5.2.1
-          npm install typescript # Необходим для работы typescript-eslint
+          npm install --save-dev @microsoft/eslint-formatter-sarif
+          npx eslint . \
+            --config eslint.config.mjs \
+            --format @microsoft/eslint-formatter-sarif \
+            --output-file eslint-results.sarif
 
-      - name: List files in backend directory
-        run: ls -la backend/ || echo "Backend directory not found"
-
-      - name: Check for conflicting ESLint config files
-        run: ls -la backend/.eslintrc* || echo "No conflicting .eslintrc files found"
-
-      - name: Run ESLint
-        env:
-          SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
-        run: npx eslint backend --config backend/eslint.config.mjs --ext .js,.jsx,.ts,.tsx --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
-        continue-on-error: false
-
-      - name: Check if SARIF file exists
-        run: ls -la eslint-results.sarif || echo "File not found"
-
-      - name: Upload analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@v3
+      - name: Upload SARIF file to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: eslint-results.sarif
-          wait-for-processing: true
+          sarif_file: frontend/eslint-results.sarif

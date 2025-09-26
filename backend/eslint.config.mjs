@@ -6,21 +6,21 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs'],
+    ignores: ['eslint.config.mjs'], 
   },
   eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.recommendedTypeChecked, 
   eslintPluginPrettierRecommended,
   {
     languageOptions: {
       globals: {
-        ...globals.node,
-        ...globals.jest,
+        ...globals.node, 
+        ...globals.jest, 
       },
-      sourceType: 'commonjs',
+      sourceType: 'commonjs', 
       parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+        projectService: true, 
+        tsconfigRootDir: import.meta.dirname, 
       },
     },
   },
@@ -30,5 +30,5 @@ export default tseslint.config(
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn'
     },
-  },
+  }
 );

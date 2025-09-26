@@ -53,7 +53,7 @@ export class AuthController {
     }
 
     if (registerDto.role === 'leader') {
-      throw new BadRequestException('Невозможно выдать роль руководителя(обратитесь к разработчикам)');
+      throw new BadRequestException('Невозможно выдать роль руководителя (обратитесь к разработчикам)');
     }
 
     try {

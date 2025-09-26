@@ -22,7 +22,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.11.0' # Укажите версию Node.js, совместимую с вашим проектом
+          node-version: '22.11.0' 
 
       - name: Install ESLint and plugins
         run: |
@@ -32,11 +32,14 @@ jobs:
           npm install typescript-eslint
           npm install eslint-plugin-prettier@5.2.1
 
+      - name: List files in backend directory
+        run: ls -la backend/ || echo "Backend directory not found"
+
       - name: Run ESLint
         env:
           SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
-        run: npx eslint backend --config backend/eslint-config.mjs --ext .js,.jsx,.ts,.tsx --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
-        continue-on-error: false # Убрали continue-on-error, чтобы видеть ошибки
+        run: npx eslint backend --config backend/eslint.config.mjs --ext .js,.jsx,.ts,.tsx --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
+        continue-on-error: false
 
       - name: Check if SARIF file exists
         run: ls -la eslint-results.sarif || echo "File not found"

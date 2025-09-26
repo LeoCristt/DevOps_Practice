@@ -12,17 +12,19 @@ on:
     paths:
       - 'frontend/**'
 
+permissions:
+  actions: read
+  security-events: write
+
 jobs:
   lint:
     name: Run ESLint and generate SARIF
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 20
 

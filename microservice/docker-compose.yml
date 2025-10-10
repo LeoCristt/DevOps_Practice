@@ -1,0 +1,20 @@
+version: '3'
+services:
+  service-a:
+    build: ./service-a
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+  service-b:
+    build: ./service-b
+    ports:
+      - "3001:3001"
+    networks:
+      - app-network
+    depends_on:
+      - service-a
+
+networks:
+  app-network:  
